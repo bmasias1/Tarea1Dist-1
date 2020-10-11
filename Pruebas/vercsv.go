@@ -25,7 +25,7 @@ func readCsvFile(filePath string) [][]string {
 }
 
 func main() {
-	fmt.Println("1) Ver pymes.csv\n2) Ver retail.csv\n3) Ver results.csv")
+	fmt.Println("1) Ver pymes.csv\n2) Ver retail.csv\n3) Ver registro.csv")
 	var opcion string
 	fmt.Scanf("%s", &opcion)
 	if opcion == "1" {
@@ -40,7 +40,7 @@ func main() {
 		}
 
 	} else if opcion == "3" {
-		records := readCsvFile("../archivos/results.csv")
+		records := readCsvFile("../archivos/registro.csv")
 		for i, producto := range records {
 			fmt.Println(i, producto)
 		}
