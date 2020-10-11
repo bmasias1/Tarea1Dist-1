@@ -31,7 +31,7 @@ func EscribirCSV(aEscribir string) string {
 		fmt.Println(err)
 	}
 
-	f, err := os.OpenFile("../archivos/results.csv", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+	f, err := os.OpenFile("../archivos/registro.csv", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
 		fmt.Println(err)
 		return "0"
