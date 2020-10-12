@@ -50,7 +50,7 @@ func EscribirCSV(aEscribir string) string {
 
 	var aux paquete //anadiendo a las colas en memoria
 	ValorInt, _ := strconv.Atoi(nueva[4])
-	aux = paquete{nueva[1], nueva[7], nueva[2], ValorInt, 0, "En bodega"}
+	aux = paquete{nueva[1], nueva[7], nueva[2], ValorInt, 0, "En bodega", nueva[5], nueva[6]}
 	if nueva[2] == "retail" {
 		colaRetail = append(colaRetail, aux)
 	} else if nueva[2] == "prioritario" {
@@ -78,6 +78,8 @@ type paquete struct {
 	valor       int
 	intentos    int
 	estado      string
+	origen      string
+	destino     string
 }
 
 type Server struct {
@@ -115,6 +117,94 @@ func (s *Server) SayHello(ctx context.Context, message *Message) (*Message, erro
 }
 
 func (s *Server) SayHelloAgain(ctx context.Context, in *Message) (*Message, error) {
-	log.Printf("Recibido el mensaje del Camion: %s", in.Otro)
-	return &Message{Body: "ola de nuevo!"}, nil
+	log.Printf("Recibido el mensaje del Camion: %s", in.Body)
+	if in.Otro == "ENTREGA" { //si el mensaje corresponde a un camion avisando una entrega completada
+		fmt.Println("Recibido " + in.Body)
+		entrega := strings.Split(in.Body, "+")
+		if entrega[1] == "retail" {
+			for i, _ := range colaRetail {
+				if colaRetail[i].IDPaquete == entrega[0] {
+					if entrega[6] != "0" {
+						colaRetail[i].estado = "Recibido"
+					} else {
+						colaRetail[i].estado = "No recibido"
+					}
+					intento, _ := strconv.Atoi(entrega[5])
+					colaRetail[i].intentos = intento
+				}
+			}
+		} else if entrega[1] == "prioritario" {
+			for i, _ := range colaPrioritario {
+				if colaPrioritario[i].IDPaquete == entrega[0] {
+					if entrega[6] != "0" {
+						colaPrioritario[i].estado = "Recibido"
+					} else {
+						colaPrioritario[i].estado = "No recibido"
+					}
+					intento, _ := strconv.Atoi(entrega[5])
+					colaPrioritario[i].intentos = intento
+				}
+			}
+		} else {
+			for i, _ := range colaNormal {
+				if colaNormal[i].IDPaquete == entrega[0] {
+					if entrega[6] != "0" {
+						colaNormal[i].estado = "Recibido"
+					} else {
+						colaNormal[i].estado = "No recibido"
+					}
+					intento, _ := strconv.Atoi(entrega[5])
+					colaNormal[i].intentos = intento
+				}
+			}
+		}
+		return &Message{Body: "Orden actualizada"}, nil
+
+	} else { //si el mensaje es un camion pidiendo un paquete
+		if in.Body == "Retail1" || in.Body == "Retail2" { //Si es camion retail
+			if colaRetail == nil && colaPrioritario == nil {
+				return &Message{Body: "SINPAQUETES"}, nil
+			} else if colaRetail != nil { //Si hay paquetes
+				for i, _ := range colaRetail { //busca paquetes retail
+					if colaRetail[i].estado == "En bodega" { //solo paquetes retail que esten en bodega
+						aux := colaRetail[i]
+						mensaje := aux.IDPaquete + "+" + aux.tipo + "+" + strconv.Itoa(aux.valor) + "+" + aux.origen + "+" + aux.destino + "+" + strconv.Itoa(aux.intentos)
+						colaRetail[i].estado = "En camino"
+						return &Message{Body: mensaje}, nil
+					}
+				}
+				for i, _ := range colaPrioritario { //si no hay paquetes retail sin despachar, busca en los prioritarios
+					if colaPrioritario[i].estado == "En bodega" {
+						aux := colaPrioritario[i]
+						mensaje := aux.IDPaquete + "+" + aux.tipo + "+" + strconv.Itoa(aux.valor) + "+" + aux.origen + "+" + aux.destino + "+" + strconv.Itoa(aux.intentos)
+						colaPrioritario[i].estado = "En camino"
+						return &Message{Body: mensaje}, nil
+					}
+				}
+			}
+
+		} else { //Si es camion normal
+			if colaPrioritario == nil && colaNormal == nil {
+				return &Message{Body: "SINPAQUETES"}, nil
+			} else { //Si hay paquetes
+				for i, _ := range colaPrioritario { //si hay prioritarios
+					if colaPrioritario[i].estado == "En bodega" { //si hay prioritarios sin despachar
+						aux := colaPrioritario[i]
+						mensaje := aux.IDPaquete + "+" + aux.tipo + "+" + strconv.Itoa(aux.valor) + "+" + aux.origen + "+" + aux.destino + "+" + strconv.Itoa(aux.intentos)
+						colaPrioritario[i].estado = "En camino"
+						return &Message{Body: mensaje}, nil
+					}
+				}
+				for i, _ := range colaNormal { //si no quedan prioritarios sin despachar, busca en paquetes normales
+					if colaNormal[i].estado == "En bodega" {
+						aux := colaNormal[i]
+						mensaje := aux.IDPaquete + "+" + aux.tipo + "+" + strconv.Itoa(aux.valor) + "+" + aux.origen + "+" + aux.destino + "+" + strconv.Itoa(aux.intentos)
+						colaNormal[i].estado = "En camino"
+						return &Message{Body: mensaje}, nil
+					}
+				}
+			}
+		}
+	}
+	return &Message{Body: "SINPAQUETES"}, nil
 }

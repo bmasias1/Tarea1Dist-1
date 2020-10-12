@@ -9,11 +9,11 @@ import (
 	"google.golang.org/grpc"
 )
 
-func main() {
+func Abrir(port string, usuario string) {
 
-	fmt.Println("Abriendo servido de logística")
+	fmt.Println("Escuchando al " + usuario + " en el puerto " + port)
 
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", 50051))
+	lis, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatalf("Hubo un fallo al abrir el servidor: %v", err)
 	}
@@ -27,4 +27,11 @@ func main() {
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("Hubo un fallo al abrir el servidor gRPC: %s", err)
 	}
+}
+
+func main() {
+	fmt.Println("Abriendo servido de logística")
+	go Abrir(":50052", "Camiones")
+	Abrir(":50051", "Clientes")
+
 }

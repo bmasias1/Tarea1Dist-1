@@ -62,7 +62,7 @@ func enviar(records [][]string, tipo string, segundos int) {
 func Send(aEnviar string, funcion string) {
 
 	var conn *grpc.ClientConn
-	conn, err := grpc.Dial("10.10.28.154:50051", grpc.WithInsecure())
+	conn, err := grpc.Dial(":50051", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("No se pudo conectar: %s", err)
 	}
@@ -73,25 +73,6 @@ func Send(aEnviar string, funcion string) {
 	response, err := c.SayHello(context.Background(), &chat.Message{Body: aEnviar + "_" + funcion, Otro: "Otro"})
 	if err != nil {
 		log.Fatalf("Error al llamar a SayHello: %s", err)
-	}
-	log.Printf("Respuesta del Servidor: %s", response.Body)
-
-}
-
-func SendCamion(aEnviar string) {
-
-	var conn *grpc.ClientConn
-	conn, err := grpc.Dial(":50051", grpc.WithInsecure())
-	if err != nil {
-		log.Fatalf("No se pudo conectar: %s", err)
-	}
-	defer conn.Close()
-
-	c := chat.NewChatServiceClient(conn)
-
-	response, err := c.SayHelloAgain(context.Background(), &chat.Message{Body: aEnviar, Otro: "Esto es de camion"})
-	if err != nil {
-		log.Fatalf("Error al llamar a SayHelloAgain: %s", err)
 	}
 	log.Printf("Respuesta del Servidor: %s", response.Body)
 
