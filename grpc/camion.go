@@ -33,7 +33,7 @@ func EscribirCsv(aEscribir string, camion string) {
 func SendCamion(aEnviar string, tipoMsj string) string {
 
 	var conn *grpc.ClientConn
-	conn, err := grpc.Dial(":50052", grpc.WithInsecure())
+	conn, err := grpc.Dial("10.10.28.154:50052", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("No se pudo conectar: %s", err)
 	}
