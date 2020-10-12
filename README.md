@@ -1,9 +1,8 @@
 # Tarea1Dist
 
 Conexion Cliente (Máquina 10.10.28.155) y Logística (máquina 10.10.28.154) lista
-Conexión Camion (aún no he usado ninguna máquina) y Logística lista
-  - Todo probado localmente
-
+Conexión Camion (Máquina 10.10.28.156) y Logística lista
+  - Todo probado
 Todos loss archivos están en la carpeta grpc:
   - logistica.go
   - cliente.go
