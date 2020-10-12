@@ -62,7 +62,7 @@ func enviar(records [][]string, tipo string, segundos int) {
 func Send(aEnviar string, funcion string) {
 
 	var conn *grpc.ClientConn
-	conn, err := grpc.Dial(":50051", grpc.WithInsecure())
+	conn, err := grpc.Dial("10.10.28.154:50051", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("No se pudo conectar: %s", err)
 	}
