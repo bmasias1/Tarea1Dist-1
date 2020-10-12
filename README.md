@@ -23,5 +23,5 @@ Todos loss archivos están en la carpeta grpc:
  8) Si el camion recibe una órden, espera el tiempo indicado antes de irse con una única órden. Estos la despachan, comunican a logística el resultado del despacho y escriben su csv correspondiente.
 
 NOTA: No se logró implementar el que los camiones despacharan la órden de mayor valor primero.
-
+NOTA2: Cualquier tipo de cliente puede solicitar el seguimiento de las ordenes, no solo pymes.
  
