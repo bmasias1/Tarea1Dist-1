@@ -104,7 +104,7 @@ func readRegistroN() [][]string {
 
 //Funcion encargada de enviar informacion del camion retail1 a finanzas
 func senderToFinanzasR1(segundos int) {
-	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	conn, err := amqp.Dial("amqp://guest:guest@10.10.28.157:5672/")
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 
@@ -162,7 +162,7 @@ func senderToFinanzasR1(segundos int) {
 
 //Funcion encargada de enviar informacion del camion retail2 a finanzas
 func senderToFinanzasR2(segundos int) {
-	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	conn, err := amqp.Dial("amqp://guest:guest@10.10.28.157:5672/")
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 
@@ -220,7 +220,7 @@ func senderToFinanzasR2(segundos int) {
 
 //Funcion encargada de enviar informacion del camion retail3 a finanzas
 func senderToFinanzasN(segundos int) {
-	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	conn, err := amqp.Dial("amqp://guest:guest@10.10.28.157:5672/")
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 
